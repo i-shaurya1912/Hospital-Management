@@ -1,5 +1,7 @@
 require("dotenv").config();
 const express = require("express");
+
+
 const cors = require("cors");
 const helmet = require("helmet");
 const rateLimit = require("express-rate-limit");
@@ -17,7 +19,7 @@ const patientRoutes = require("./routes/patientRoutes");
 
 const app = express();
 
-// 1. Security headers sabse pehle
+// 1.  Security headers sabse pehle
 app.use(helmet());
 
 // 2. CORS - sirf apni frontend URL se requests accept karo

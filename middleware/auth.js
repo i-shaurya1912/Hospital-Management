@@ -1,11 +1,13 @@
 const jwt = require("jsonwebtoken");
 const User = require("../models/User");
+const logger = require("../config/logger");
 
 // Verifies JWT and attaches logged-in user to req
 exports.protect = async (req, res, next) => {
   try {
     const authHeader = req.headers.authorization;
     if (!authHeader || !authHeader.startsWith("Bearer ")) {
+      logger.warn("Auth failed: no Bearer token in header");
       return res.status(401).json({ message: "Not authorized, no token" });
     }
 
@@ -14,11 +16,13 @@ exports.protect = async (req, res, next) => {
 
     req.user = await User.findById(decoded.id).select("-password");
     if (!req.user) {
+      logger.warn(`Auth failed: user ${decoded.id} no longer exists`);
       return res.status(401).json({ message: "User no longer exists" });
     }
 
     next();
   } catch (err) {
+    logger.warn(`Auth failed: ${err.message}`);
     return res.status(401).json({ message: "Not authorized, token invalid or expired" });
   }
 };

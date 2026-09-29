@@ -9,9 +9,9 @@ const {
 } = require("../controllers/patientController");
 const { protect, authorize } = require("../middleware/auth");
 
-router.use(protect); // saare patient routes ke liye login zaroori hai
+router.use(protect);
 
-router.get("/", getPatients);
+router.get("/", authorize("admin", "doctor"), getPatients);
 router.get("/:id", getPatient);
 router.post("/", authorize("admin", "doctor"), createPatient);
 router.put("/:id", authorize("admin", "doctor"), updatePatient);

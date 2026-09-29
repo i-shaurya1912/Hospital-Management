@@ -15,7 +15,21 @@ const connectDB = require("./config/db");
 const logger = require("./config/logger");
 const authRoutes = require("./routes/authRoutes");
 
-const patientRoutes = require("./routes/patientRoutes");
+const patientRoutes = require("./routes/patientRoutes"); 
+
+
+const requiredEnv = ["MONGO_URI", "JWT_SECRET", "CLIENT_URL"];
+const missing = requiredEnv.filter((key) => !process.env[key]);
+if (missing.length) {
+  console.error(`❌ Missing environment variables: ${missing.join(", ")}`);
+  process.exit(1);
+}
+if (process.env.JWT_SECRET.length < 32) {
+  console.error("❌ JWT_SECRET is too short (minimum 32 characters)");
+  process.exit(1);
+}
+
+
 
 const app = express();
 

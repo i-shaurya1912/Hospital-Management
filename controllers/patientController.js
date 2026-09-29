@@ -1,7 +1,6 @@
 const Patient = require("../models/Patient");
 const logger = require("../config/logger");
 
-// GET /api/patients - list all (with optional search)
 exports.getPatients = async (req, res) => {
   try {
     const filter = {};
@@ -17,11 +16,19 @@ exports.getPatients = async (req, res) => {
   }
 };
 
-// GET /api/patients/:id
 exports.getPatient = async (req, res) => {
   try {
     const patient = await Patient.findById(req.params.id);
     if (!patient) return res.status(404).json({ message: "Patient not found" });
+
+    if (req.user.role === "patient") {
+      const isOwnRecord = patient.user && patient.user.toString() === req.user._id.toString();
+      if (!isOwnRecord) {
+        logger.warn(`Access denied: ${req.user.email} tried to read patient ${patient._id}`);
+        return res.status(403).json({ message: "Access denied" });
+      }
+    }
+
     res.json(patient);
   } catch (err) {
     logger.error(`Get patient error: ${err.message}`);
@@ -29,7 +36,6 @@ exports.getPatient = async (req, res) => {
   }
 };
 
-// POST /api/patients
 exports.createPatient = async (req, res) => {
   try {
     const patient = await Patient.create(req.body);
@@ -41,7 +47,6 @@ exports.createPatient = async (req, res) => {
   }
 };
 
-// PUT /api/patients/:id
 exports.updatePatient = async (req, res) => {
   try {
     const patient = await Patient.findByIdAndUpdate(req.params.id, req.body, {
@@ -57,7 +62,6 @@ exports.updatePatient = async (req, res) => {
   }
 };
 
-// DELETE /api/patients/:id
 exports.deletePatient = async (req, res) => {
   try {
     const patient = await Patient.findByIdAndDelete(req.params.id);

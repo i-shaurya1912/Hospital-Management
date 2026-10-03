@@ -19,6 +19,8 @@ const patientRoutes = require("./routes/patientRoutes");
 
 const doctorRoutes = require("./routes/doctorRoutes");
 
+const appointmentRoutes = require("./routes/appointmentRoutes");
+
 
 const requiredEnv = ["MONGO_URI", "JWT_SECRET", "CLIENT_URL"];
 const missing = requiredEnv.filter((key) => !process.env[key]);
@@ -96,6 +98,8 @@ app.use("/api/patients", patientRoutes);
 
 
 app.use("/api/doctors", doctorRoutes);
+
+app.use("/api/appointments", appointmentRoutes);
 
 
 const PORT = process.env.PORT || 5000;

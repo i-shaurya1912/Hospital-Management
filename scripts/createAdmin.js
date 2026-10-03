@@ -26,7 +26,7 @@ const run = async () => {
     if (existing) throw new Error("A user with this email already exists");
 
     await User.create({ name, email, password, role: "admin" });
-    console.log(`\n✅ Admin created: ${email}`);
+    console.log(`\n✅ Admin created: ${email}`); 
   } catch (err) {
     console.error(`\n❌ ${err.message}`);
     process.exitCode = 1;

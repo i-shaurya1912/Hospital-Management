@@ -21,7 +21,7 @@ const handleUpload = (req, res, next) => {
 
 
 router.get("/", getRecords);
-router.post("/", authorize("admin", "doctor"), upload.single("file"), uploadRecord);
+router.post("/", authorize("admin", "doctor"), handleUpload, uploadRecord);
 router.delete("/:id", authorize("admin", "doctor"), deleteRecord);
 
 module.exports = router;

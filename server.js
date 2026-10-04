@@ -24,6 +24,8 @@ const appointmentRoutes = require("./routes/appointmentRoutes");
 
 const billRoutes = require("./routes/billRoutes");
 
+const medicalRecordRoutes = require("./routes/medicalRecordRoutes");
+
 
 const requiredEnv = ["MONGO_URI", "JWT_SECRET", "CLIENT_URL"];
 const missing = requiredEnv.filter((key) => !process.env[key]);
@@ -90,7 +92,7 @@ app.use("/api/auth/register", authLimiter);
 // Static file serving (medical records)
 app.use("/uploads", express.static(path.join(__dirname, "uploads")));
 
-
+app.use("/api/medical-records", medicalRecordRoutes);
 
 app.get("/", (req, res) => res.send("Verma Hospital API is running"));
 

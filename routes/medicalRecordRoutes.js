@@ -4,6 +4,7 @@ const upload = require("../middleware/upload");
 const { getRecords, uploadRecord, deleteRecord } = require("../controllers/medicalRecordController");
 const { protect, authorize } = require("../middleware/auth");
 
+
 router.use(protect);
 
 

@@ -31,7 +31,20 @@ exports.getPrescriptions = async (req, res) => {
 
 exports.createPrescription = async (req, res) => {
   try {
-    const prescription = await Prescription.create(req.body);
+    const payload = { ...req.body };
+
+    if (req.user.role === "doctor") {
+      // Doctor ki identity token se aati hai, body se nahi
+      const doctor = await Doctor.findOne({ user: req.user._id });
+      if (!doctor) {
+        return res.status(403).json({ message: "No doctor profile linked to this account" });
+      }
+      payload.doctor = doctor._id;
+    } else if (!payload.doctor) {
+      return res.status(400).json({ message: "doctor is required" });
+    }
+
+    const prescription = await Prescription.create(payload);
     logger.info(`Prescription created: ${prescription._id} by ${req.user.email}`);
     res.status(201).json(prescription);
   } catch (err) {

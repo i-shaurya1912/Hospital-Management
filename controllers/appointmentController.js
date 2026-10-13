@@ -63,11 +63,20 @@ exports.getAppointment = async (req, res) => {
 // POST /api/appointments
 exports.createAppointment = async (req, res) => {
   try {
-    const appointment = await Appointment.create(req.body);
+    const payload = { ...req.body };
+
+    if (req.user.role === "patient") {
+      const patient = await Patient.findOne({ user: req.user._id });
+      if (!patient) {
+        return res.status(403).json({ message: "No patient profile linked to this account" });
+      }
+      payload.patient = patient._id;
+    }
+
+    const appointment = await Appointment.create(payload);
     logger.info(`Appointment created: patient ${appointment.patient} with doctor ${appointment.doctor} by ${req.user.email}`);
     res.status(201).json(appointment);
   } catch (err) {
-    // Duplicate slot booking - MongoDB ka unique index violation
     if (err.code === 11000) {
       return res.status(409).json({ message: "This time slot is already booked for this doctor" });
     }

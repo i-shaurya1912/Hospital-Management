@@ -34,6 +34,11 @@ const medicalRecordRoutes = require("./routes/medicalRecordRoutes");
 const prescriptionRoutes = require("./routes/prescriptionRoutes");
 const notificationRoutes = require("./routes/notificationRoutes");
 
+
+const reportRoutes = require("./routes/reportRoutes");
+
+
+
 const app = express();
 
 // 1. Security headers sabse pehle
@@ -98,6 +103,11 @@ app.use("/api/bills", billRoutes);
 app.use("/api/medical-records", medicalRecordRoutes);
 app.use("/api/prescriptions", prescriptionRoutes);
 app.use("/api/notifications", notificationRoutes);
+
+
+app.use("/api/reports", reportRoutes);
+
+
 
 // 404 handler - koi route match na ho
 app.use((req, res) => {

@@ -3,6 +3,8 @@ const Doctor = require("../models/Doctor");
 const Patient = require("../models/Patient");
 const logger = require("../config/logger");
 
+const { createNotification } = require("./notificationController");
+
 // GET /api/appointments - role ke hisaab se filter
 exports.getAppointments = async (req, res) => {
   try {
@@ -75,6 +77,31 @@ exports.createAppointment = async (req, res) => {
 
     const appointment = await Appointment.create(payload);
     logger.info(`Appointment created: patient ${appointment.patient} with doctor ${appointment.doctor} by ${req.user.email}`);
+
+    // Doctor aur patient dono ko notify karo (agar unka login account linked hai)
+    const [doctor, patient] = await Promise.all([
+      Doctor.findById(appointment.doctor),
+      Patient.findById(appointment.patient),
+    ]);
+    const dateStr = new Date(appointment.date).toLocaleDateString("en-IN");
+
+    if (doctor?.user) {
+      await createNotification({
+        userId: doctor.user,
+        message: `New appointment with ${patient?.name || "a patient"} on ${dateStr} at ${appointment.timeSlot}`,
+        type: "appointment",
+        relatedId: appointment._id,
+      });
+    }
+    if (patient?.user) {
+      await createNotification({
+        userId: patient.user,
+        message: `Your appointment with Dr. ${doctor?.name || ""} is confirmed for ${dateStr} at ${appointment.timeSlot}`,
+        type: "appointment",
+        relatedId: appointment._id,
+      });
+    }
+
     res.status(201).json(appointment);
   } catch (err) {
     if (err.code === 11000) {

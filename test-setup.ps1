@@ -22,7 +22,7 @@ $patientId = $me.user.patientProfile
 $docMe = Invoke-RestMethod -Uri "$base/auth/me" -Headers @{Authorization="Bearer $doctoken"}
 $ownDoctorId = $docMe.user.doctorProfile
 
-$doctors = Invoke-RestMethod -Uri "$base/doctors" -Headers @{Authorization="Bearer $atoken"}
+$doctors = (Invoke-RestMethod -Uri "$base/doctors?limit=50" -Headers @{Authorization="Bearer $atoken"}).doctors
 $doctorId = ($doctors | Where-Object { $_.name -eq "Dr. Priya Sharma" })._id
 
 Write-Host "Ready: atoken=$($atoken.Length) ptoken=$($ptoken.Length) doctoken=$($doctoken.Length)" -ForegroundColor Green

@@ -13,8 +13,8 @@ router.use(protect);
 
 router.get("/", getAppointments);
 router.get("/:id", getAppointment);
-router.post("/", createAppointment);
+router.post("/", authorize("admin", "patient"), createAppointment);
 router.put("/:id", updateAppointment);
-router.delete("/:id", authorize("admin", "doctor"), deleteAppointment);
+router.delete("/:id", authorize("admin"), deleteAppointment);
 
 module.exports = router;
